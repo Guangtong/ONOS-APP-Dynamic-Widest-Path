@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.ece595.widest.AppComponentTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.128 sec - in org.ece595.widest.AppComponentTest

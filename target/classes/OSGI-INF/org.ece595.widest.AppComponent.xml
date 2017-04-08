@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.ece595.widest.AppComponent" activate="activate" deactivate="deactivate">
+    <implementation class="org.ece595.widest.AppComponent"/>
+    <property name="service.pid" value="org.ece595.widest.AppComponent"/>
+    <reference name="packetService" interface="org.onosproject.net.packet.PacketService" cardinality="1..1" policy="static" bind="bindPacketService" unbind="unbindPacketService"/>
+    <reference name="coreService" interface="org.onosproject.core.CoreService" cardinality="1..1" policy="static" bind="bindCoreService" unbind="unbindCoreService"/>
+    <reference name="intentService" interface="org.onosproject.net.intent.IntentService" cardinality="1..1" policy="static" bind="bindIntentService" unbind="unbindIntentService"/>
+</scr:component>
