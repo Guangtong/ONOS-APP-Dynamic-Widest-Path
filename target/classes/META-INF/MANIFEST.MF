@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1491620087015
+Bnd-LastModified: 1491771346592
 Build-Jdk: 1.8.0_121
 Built-By: mininet
 Bundle-Description: ONOS OSGi bundle archetype
@@ -9,9 +9,9 @@ Bundle-SymbolicName: org.ece595.widest-path-app
 Bundle-Version: 1.0.0.SNAPSHOT
 Created-By: Apache Maven Bundle Plugin
 Export-Package: org.ece595.widest;uses:="org.onosproject.core,org.onospr
- oject.net,org.onosproject.net.flow.criteria,org.onosproject.net.intent,
- org.onosproject.net.packet,org.onosproject.net.topology";version="1.0.0
- "
+ oject.net,org.onosproject.net.device,org.onosproject.net.flow.criteria,
+ org.onosproject.net.host,org.onosproject.net.intent,org.onosproject.net
+ .packet,org.onosproject.net.topology,org.slf4j";version="1.0.0"
 Import-Package: com.google.common.collect;version="[19.0,20)",org.onlab.
  graph;version="[1.10,2)",org.onlab.packet;version="[1.10,2)",org.onospr
  oject.common;version="[1.10,2)",org.onosproject.core;version="[1.10,2)"

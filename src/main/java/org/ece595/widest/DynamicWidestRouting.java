@@ -3,8 +3,6 @@ package org.ece595.widest;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.ReferenceCardinality;
 import org.onosproject.common.DefaultTopology;
 import org.onosproject.net.ConnectPoint;
 import org.onosproject.net.DefaultEdgeLink;
@@ -17,6 +15,7 @@ import org.onosproject.net.HostId;
 import org.onosproject.net.Link;
 import org.onosproject.net.Path;
 import org.onosproject.net.PortNumber;
+import org.onosproject.net.device.DeviceService;
 import org.onosproject.net.host.HostService;
 import org.onosproject.net.provider.ProviderId;
 import org.onosproject.net.topology.DefaultTopologyVertex;
@@ -34,18 +33,34 @@ import java.util.List;
 import java.util.Set;
 
 
-public class RealtimeWidestRouting {
+public class DynamicWidestRouting {
 
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
     private HostService hostService;
-
-    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
+    private DeviceService deviceService;
     private TopologyService topologyService;
+    private boolean isDynamic;
 
-    private final ProviderId routeProviderId = new ProviderId("ECE595","SGT,FHF");
+
+    public DynamicWidestRouting(HostService hostService, TopologyService topologyService, DeviceService deviceService) {
+        this.hostService = hostService;
+        this.topologyService = topologyService;
+        this.deviceService = deviceService;
+        linkBandWidth = new LinkBandWidthTool(deviceService);
+        isDynamic = true;
+    }
+
+    public void setStatic(){
+        isDynamic = false;
+    }
+    public void setDynamic(){
+        isDynamic = true;
+    }
+
+
+    private final ProviderId routeProviderId = new ProviderId("ECE595", "SGT,FHF");
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final EdgeBandWidth edgeBandWidth = new EdgeBandWidth();
+    private LinkBandWidthTool linkBandWidth;
 
 
     //return one path in fact
@@ -78,11 +93,15 @@ public class RealtimeWidestRouting {
             Set<List<TopologyEdge>> allRoutes = findAllRoutes(topo, srcLink.dst().deviceId(), dstLink.src().deviceId());
 
             Set<Path> allPaths = calculateRoutesCost(allRoutes);
+            //log.info("\n ====all Paths:" + allPaths.toString() );
+
 
             Path linkPath = selectRoute(allPaths);
+            //log.info("\n ====linkPath:" + linkPath.toString() );
 
             Path wholePath = buildWholePath(srcLink, dstLink, linkPath);
             //extract linkPath links and combine to a whole Array of Link, then transform to Path
+            //log.info("\n ====WholePath:" + wholePath.toString() );
 
             return wholePath != null ? ImmutableSet.of(wholePath) : ImmutableSet.of();
 
@@ -183,13 +202,18 @@ public class RealtimeWidestRouting {
     }
 
     private double bottleNeckBandwidth(List<TopologyEdge> edges) {
-
-        double bw = 0;
+        //the smallest remaining is the bottleneck
+        double min = Double.MAX_VALUE;
         for (TopologyEdge edge : edges) {
-            double rbw = this.edgeBandWidth.getRemain(edge);
-            bw = bw < rbw ? rbw : bw;
+            double bw;
+            if(isDynamic) {
+                bw = this.linkBandWidth.getRemain(edge.link());
+            }else {
+                bw = this.linkBandWidth.getCapacity(edge.link());
+            }
+            min = bw < min ? bw : min;
         }
-        return bw;
+        return min;
     }
 
     private Path selectRoute(Set<Path> paths) {
