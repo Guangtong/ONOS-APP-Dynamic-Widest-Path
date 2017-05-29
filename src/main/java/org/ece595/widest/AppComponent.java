@@ -1,18 +1,3 @@
-/*
- * Copyright 2017-present Open Networking Laboratory
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.ece595.widest;
 
 import org.apache.felix.scr.annotations.Activate;
@@ -40,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 
 
 @Component(immediate = true)
@@ -70,6 +56,11 @@ public class AppComponent {
     private WidestpathPacketProcessor packetProcessor;
     private DynamicWidestRouting widestPathRouting;
 
+    //establish a matrix that represents the bandwidth of each edge
+    public static int matrixLen; // support one less vertexes
+    public static long[][] edgeCapacity;
+
+
     @Activate
     protected void activate() {
 
@@ -86,6 +77,18 @@ public class AppComponent {
 
         packetService.requestPackets(DefaultTrafficSelector.builder().matchEthType(Ethernet.TYPE_IPV4).build(),
                                      PacketPriority.REACTIVE, appId);
+
+        try {
+            final String fileName = "/home/mininet/widest-path-app/t2_6nodes_easy.txt";
+
+            ReadEdgeParameter readedgetool = new ReadEdgeParameter(fileName);
+            readedgetool.readBw();
+        } catch (Exception e1) {
+            log.warn("\n***************" +
+                       "\n" + e1.toString() +
+                       "\nCan not read edge parameters from ReadEdgeParameter!\n**************\n");
+            return;
+        }
 
         log.info("Started");
     }

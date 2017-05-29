@@ -51,10 +51,24 @@ public class WidestpathPacketProcessor implements PacketProcessor {
     @Override
     public void process(PacketContext context) {
 
+        //I want to see what happened here. What do I received from the southbound?
         //true if this packet is already sent or blocked
         if (context.isHandled()) {
             return;
         }
+
+
+        log.info("\n" +
+                         "\n Context: " + context.toString()+
+                         "\n InPacket.receivedFrom: " + (context.inPacket() !=null? context.inPacket().receivedFrom().toString() : "empty" )+
+                         "\n InPacket.parsed: " + (context.inPacket() !=null? context.inPacket().parsed().toString() : "empty" ) +
+                         "\n outPacket data: " + (context.outPacket() !=null && context.outPacket().data() !=null?  context.outPacket().data().toString() : "empty" ) +
+                         "\n outPacket sendThrough: " + (context.outPacket() !=null && context.outPacket().sendThrough() !=null ?context.outPacket().sendThrough().toString() : "empty" ) +
+                         "\n outPacket treatment: " + (context.outPacket()!=null && context.outPacket().treatment() !=null ? context.outPacket().treatment().allInstructions().toArray().toString() : "empty" ) +
+                         "\n context.isHanded: " + context.isHandled() +
+                         "\n context timestamp: " + context.time() +
+                         "\n");
+
 
         Ethernet pkt = context.inPacket().parsed();
         if (pkt.getEtherType() == Ethernet.TYPE_IPV4) {

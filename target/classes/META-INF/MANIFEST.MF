@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1491771346592
-Build-Jdk: 1.8.0_121
+Bnd-LastModified: 1493527314637
+Build-Jdk: 1.8.0_131
 Built-By: mininet
 Bundle-Description: ONOS OSGi bundle archetype
 Bundle-ManifestVersion: 2

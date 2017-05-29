@@ -23,6 +23,7 @@ import java.util.Random;
 
 public class LinkBandWidthTool {
     private DeviceService deviceService;
+
     private final Logger log = LoggerFactory.getLogger(getClass());
     public LinkBandWidthTool(DeviceService deviceService) {
         this.deviceService = deviceService;
@@ -54,11 +55,13 @@ public class LinkBandWidthTool {
         if (l.state() == Link.State.INACTIVE) {
             return 0;
         }
-        ConnectPoint src = l.src();
-        ConnectPoint dst = l.dst();
+        DeviceId src = l.src().deviceId();
+        DeviceId dst = l.dst().deviceId();
+        int srci = Integer.parseInt(src.toString().substring(3));
+        int dsti = Integer.parseInt(dst.toString().substring(3));
 
-        double srcPortBw = deviceService.getPort(src).portSpeed() ;  //Mbps
-        double dstPortBw = deviceService.getPort(dst).portSpeed() ;
+        //double srcPortBw = deviceService.getPort(l.src()).portSpeed() ;  //Mbps
+        //double dstPortBw = deviceService.getPort(l.dst()).portSpeed() ;
 
         //return Math.min(srcPortBw, dstPortBw);
 
@@ -68,7 +71,8 @@ public class LinkBandWidthTool {
 
         //return 1 + 4 * r.nextDouble();   //r.nextDouble() return 0~1
 
-        return 10;
+
+        return AppComponent.edgeCapacity[srci][dsti];
 
     }
 
